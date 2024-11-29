@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -10,7 +9,7 @@ export const metadata: Metadata = {
     absolute: "AI Resume Builder",
   },
   description:
-    "Crie currículos profissionais de forma fácil e rápida com nosso criador online alimentado por inteligência artificial. Personalize seus documentos, destaque suas habilidades e conquiste a atenção dos recrutadores.",
+    "AI Resume Builder is the easiest way to create a professional resume that will help you land your dream job.",
 };
 
 export default function RootLayout({
@@ -19,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br">
+    <html lang="en">
       <body className={inter.className}>{children}</body>
     </html>
   );
