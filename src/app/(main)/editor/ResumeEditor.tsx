@@ -1,27 +1,30 @@
 "use client"
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import GeneralInfoForm from './forms/GeneralInfoForm'
-import PersonalInfoForm from './forms/PersonalInfoForm'
+
 import { useSearchParams } from 'next/navigation'
 import { steps } from './steps'
 import Breadcrumbs from './Breadcrumbs'
 import Footer from './Footer'
+import { useState } from 'react'
+import { ResumeValues } from '@/lib/validation'
 
 
 const ResumeEditor = () => {
-    const searchParams  = useSearchParams()
+    const searchParams = useSearchParams()
+
+    const [resumeData, setResumeData] = useState<ResumeValues>({})
 
     const currentStep = searchParams.get('step') || steps[0].key
-    function setStep(key:string){
+    function setStep(key: string) {
         const newSearchParams = new URLSearchParams(searchParams)
-        newSearchParams.set("step",key)
-        window.history.pushState(null,"",`?${newSearchParams.toString()}`)
+        newSearchParams.set("step", key)
+        window.history.pushState(null, "", `?${newSearchParams.toString()}`)
     }
+    
 
     const FormComponent = steps.find(
-        step => step.key === currentStep
+        (step) => step.key === currentStep
     )?.component
+    console.log(currentStep)
     return (
         <div className='flex  grow  flex-col'>
             <header className='space-y-1.5 border-b px-3 py-5 text-center'>
@@ -33,16 +36,16 @@ const ResumeEditor = () => {
             <main className='relative grow'>
                 <div className="absolute bottom-0 top-0 flex w-full">
                     <div className="w-full  md:w-1/2 p-3 overflow-y-auto  space-y-6">
-                        <Breadcrumbs currentStep={currentStep}  setCurrentStep={setStep} />
-                        {FormComponent && <FormComponent />}
+                        <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
+                        {FormComponent && <FormComponent resumeData={resumeData} setResumeData={setResumeData} />}
                     </div>
                     <div className='grow md:border-r' />
                     <div className="hidden w-1/2 md:flex">
-                        Right
+                        <pre>{JSON.stringify(resumeData, null, 2)}</pre>
                     </div>
                 </div>
             </main>
-           <Footer currentStep={currentStep} setCurrentStep={setStep} />
+            <Footer currentStep={currentStep} setCurrentStep={setStep} />
         </div>
     )
 }
