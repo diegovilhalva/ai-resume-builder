@@ -8,6 +8,8 @@ import { useState } from 'react'
 import { ResumeValues } from '@/lib/validation'
 import ResumePreviewSection from './ResumePreviewSection'
 import { cn } from '@/lib/utils'
+import useUnloadwarning from '@/hooks/useUnloadWarning'
+import useAutoSaveResume from './useAutoSaveResume'
 
 
 const ResumeEditor = () => {
@@ -15,7 +17,8 @@ const ResumeEditor = () => {
 
     const [resumeData, setResumeData] = useState<ResumeValues>({})
     const [showSmResumePreview,setShowSmResumePreview] = useState(false)
-
+    const {isSaving,hasUnsavedChanges} = useAutoSaveResume(resumeData)
+    useUnloadwarning(hasUnsavedChanges)
     const currentStep = searchParams.get('step') || steps[0].key
     function setStep(key: string) {
         const newSearchParams = new URLSearchParams(searchParams)
@@ -27,7 +30,8 @@ const ResumeEditor = () => {
     const FormComponent = steps.find(
         (step) => step.key === currentStep
     )?.component
-    console.log(currentStep)
+    
+   
     return (
         <div className='flex  grow  flex-col'>
             <header className='space-y-1.5 border-b px-3 py-5 text-center'>
@@ -47,7 +51,8 @@ const ResumeEditor = () => {
                 </div>
             </main>
             <Footer currentStep={currentStep} setCurrentStep={setStep} 
-            showSmResumePreview={showSmResumePreview} setShowSmResumePreview={setShowSmResumePreview} />
+            showSmResumePreview={showSmResumePreview} setShowSmResumePreview={setShowSmResumePreview}
+            isSaving={isSaving} />
         </div>
     )
 }

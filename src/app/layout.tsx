@@ -4,6 +4,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 import { ClerkProvider } from "@clerk/nextjs"
 import { ThemeProvider } from "next-themes"
+import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: {
     template: "%s - AI Resume Builder",
@@ -27,6 +28,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange>
             {children}
+            <Toaster />
           </ThemeProvider>
 
         </body>

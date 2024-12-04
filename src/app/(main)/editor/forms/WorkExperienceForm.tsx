@@ -89,9 +89,14 @@ const WorkExperienceForm = ({ resumeData, setResumeData }: EditorFormProps) => {
             </div>
             <Form {...form}>
                 <form className="space-y-3">
-                    {fields.map((field, index) => (
-                        <WorkExperienceItem key={field.id} id={field.id} index={index} form={form} remove={remove} />
-                    ))}
+                    <DndContext sensors={sensors} collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd} modifiers={[restrictToVerticalAxis]}>
+                        <SortableContext items={fields} strategy={verticalListSortingStrategy}>
+                            {fields.map((field, index) => (
+                                <WorkExperienceItem key={field.id} id={field.id} index={index} form={form} remove={remove} />
+                            ))}
+                        </SortableContext>
+                    </DndContext>
                     <div className="flex justify-center">
                         <Button type="button" onClick={() => append({
                             position: "",
