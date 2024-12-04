@@ -1,13 +1,14 @@
+import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { EditorFormProps } from "@/lib/types"
 import { personalInfoSchema, PersonalInfoValues } from "@/lib/validation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 
 
-const PersonalInfoForm = ({ resumeData,setResumeData}:EditorFormProps) => {
+const PersonalInfoForm = ({ resumeData, setResumeData }: EditorFormProps) => {
     const form = useForm<PersonalInfoValues>({
         resolver: zodResolver(personalInfoSchema),
         defaultValues: {
@@ -25,10 +26,11 @@ const PersonalInfoForm = ({ resumeData,setResumeData}:EditorFormProps) => {
         const { unsubscribe } = form.watch(async (values) => {
             const isValid = await form.trigger()
             if (!isValid) return
-            setResumeData({...resumeData,...values})
+            setResumeData({ ...resumeData, ...values })
         })
         return unsubscribe
-    }, [form,resumeData,setResumeData])
+    }, [form, resumeData, setResumeData])
+    const photoInputRef = useRef<HTMLInputElement>(null)
     return (
         <div className="max-w-xl mx-auto space-y-6">
             <div className="space-y-1.5 text-center">
@@ -42,19 +44,29 @@ const PersonalInfoForm = ({ resumeData,setResumeData}:EditorFormProps) => {
                         name="photo" render={({ field: { value, ...fieldValues } }) => (
                             <FormItem>
                                 <FormLabel>Your photo</FormLabel>
-                                <FormControl>
-                                    <Input {...fieldValues} type="file" accept="image/*" onChange={(e) => {
-                                        const file = e.target.files?.[0]
-                                        fieldValues.onChange(file)
-                                    }} />
-                                </FormControl>
+                                <div className="flex items-center gap-2 ">
+                                    <FormControl>
+                                        <Input {...fieldValues} type="file" accept="image/*" onChange={(e) => {
+                                            const file = e.target.files?.[0]
+                                            fieldValues.onChange(file)
+                                        }} ref={photoInputRef} />
+                                    </FormControl>
+                                    <Button variant="secondary" type="button" 
+                                    onClick={() => {
+                                        fieldValues.onChange(null) 
+                                        if(photoInputRef.current){
+                                        photoInputRef.current.value = ""
+                                    } }  }>
+                                        Remove
+                                    </Button>
+                                </div>
                                 <FormMessage />
                             </FormItem>
                         )} />
                     <div className="grid grid-cols-2 gap-3">
                         <FormField control={form.control} name="firstName" render={({ field }) => (
                             <FormItem>
-                                    <FormLabel>
+                                <FormLabel>
                                     First name
                                 </FormLabel>
                                 <FormControl>
@@ -140,7 +152,7 @@ const PersonalInfoForm = ({ resumeData,setResumeData}:EditorFormProps) => {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />      
+                    />
                 </form>
             </Form>
         </div>

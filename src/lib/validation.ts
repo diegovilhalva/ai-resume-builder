@@ -20,6 +20,8 @@ export const personalInfoSchema = z.object({
     country: optionalString,
     phone: optionalString,
     email: optionalString,
+    colorHex:optionalString,
+    borderStyle:optionalString
 })
 
 export type PersonalInfoValues = z.infer<typeof personalInfoSchema>
