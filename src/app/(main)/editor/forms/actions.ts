@@ -67,6 +67,30 @@ export async function generateSummary(input: GenerateSummaryInput) {
         throw error;
     }
 }
+function parseWorkExperience(text: string): WorkExperience {
+    const match = text.match(
+        /Job title:\s*(.*?)\s*Company:\s*(.*?)\s*Start date:\s*(.*?)?\s*End date:\s*(.*?)?\s*Description:\s*([\s\S]*)/i
+    );
+
+
+    if (!match) {
+        console.error("Failed to parse AI response:", text);
+        throw new Error("Failed to parse AI response");
+    }
+
+    const [, position, company, startDate, endDate, description] = match;
+
+    const descriptionLines = description.split("\n").map(line => line.trim()).filter(line => line);
+    return {
+        position: position?.trim() || undefined,
+        company: company?.trim() || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+        description: descriptionLines.join("\n"),
+    };
+
+}
+
 
 export async function generateWorkExperience(
     input: GenerateWorkExperienceInput,
@@ -74,18 +98,21 @@ export async function generateWorkExperience(
     const { description } = generateWorkExperienceSchema.parse(input);
 
     const prompt = `
-    You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input.
-    Your response must adhere to the following structure:
+        You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input.
+        Your response **must strictly adhere** to the following structure. Ensure no additional text or variations:
 
-    Job title: <job title>
-    Company: <company name>
-    Start date: <format: YYYY-MM-DD> (optional)
-    End date: <format: YYYY-MM-DD> (optional)
-    Description: <an optimized description in bullet format>
+        Job title: <job title>
+        Company: <company name>
+        Start date: <format: YYYY-MM-DD> (optional, use "N/A" if not provided)
+        End date: <format: YYYY-MM-DD> (optional, use "Present" if ongoing)
+        Description:
+        - <description in bullet format>
+        - <continue bullet points as necessary>
 
     Please provide a work experience entry from this description:
     ${description}
   `;
+    console.log("Prompt:", prompt);
 
     try {
         const response = await model.generateContent([prompt]);
@@ -95,6 +122,8 @@ export async function generateWorkExperience(
         if (!aiResponse) {
             throw new Error("AI response is empty.");
         }
+        console.log("AI Response:", aiResponse);
+
 
         const parsedResponse = parseWorkExperience(aiResponse);
 
@@ -105,24 +134,6 @@ export async function generateWorkExperience(
     }
 }
 
-function parseWorkExperience(text: string): WorkExperience {
-    const match = text.match(
-      /Job title: (.*)\nCompany: (.*)\nStart date: (\d{4}-\d{2}-\d{2})?\nEnd date: (\d{4}-\d{2}-\d{2})?\nDescription: ([\s\S]*)/
-    );
-  
-    if (!match) {
-      throw new Error("Failed to parse AI response");
-    }
-  
-    const [, position, company, startDate, endDate, description] = match;
-  
-    return {
-      position: position?.trim() || undefined,
-      company: company?.trim() || undefined,
-      startDate: startDate?.trim() || undefined,
-      endDate: endDate?.trim() || undefined,
-      description: description?.trim() || undefined,
-    };
-  }
-  
-  
+
+
+
