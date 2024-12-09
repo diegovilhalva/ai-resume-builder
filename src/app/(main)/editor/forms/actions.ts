@@ -103,8 +103,8 @@ export async function generateWorkExperience(
 
         Job title: <job title>
         Company: <company name>
-        Start date: <format: YYYY-MM-DD> (optional, use "N/A" if not provided)
-        End date: <format: YYYY-MM-DD> (optional, use "Present" if ongoing)
+        Start date: <format: YYYY-MM-DD> (only if provided)
+        End date: <format: YYYY-MM-DD> (only if provided)
         Description:
         - <description in bullet format>
         - <continue bullet points as necessary>
