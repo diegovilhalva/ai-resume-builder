@@ -7,6 +7,7 @@ import usePremiumModal from "@/hooks/usePremiuModal"
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 import { createCheckoutSession } from "./actions"
+import { env } from "@/env"
 
 const premiumFeatures = ["AI tools", "Up to 3 resumes"]
 const premiumPlusFeatures = ["Infinite resumes", "Design customizations"]
@@ -55,7 +56,7 @@ const PremiumModal = () => {
                                     </li>
                                 ))}
                             </ul>
-                            <Button onClick={() => handlePremiumClick(process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY as string)} disabled={loading}>Get Premium</Button>
+                            <Button onClick={() => handlePremiumClick(env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY )} disabled={loading}>Get Premium</Button>
                         </div>
                         <div className="mx-6 border-l" />
                         <div className="flex w-1/2 flex-col space-y-5">
@@ -70,7 +71,7 @@ const PremiumModal = () => {
                                     </li>
                                 ))}
                             </ul>
-                            <Button variant="premium" onClick={() => handlePremiumClick(process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY as string)} disabled={loading}>Get Premium Plus</Button>
+                            <Button variant="premium" onClick={() => handlePremiumClick(env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY)} disabled={loading}>Get Premium Plus</Button>
                         </div>
                     </div>
                 </div>
