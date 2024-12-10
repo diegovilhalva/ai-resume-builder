@@ -8,17 +8,19 @@ import { Badge } from "./ui/badge"
 import { BorderStyles } from "@/app/(main)/editor/BorderStyleButton"
 interface ResumePreviewProps {
   resumeData: ResumeValues
+  contentRef?: React.Ref<HTMLDivElement>
   className?: string
+
 }
 
-const ResumePreview = ({ resumeData, className }: ResumePreviewProps) => {
+const ResumePreview = ({ resumeData, className,contentRef }: ResumePreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { width } = useDimensions(containerRef)
   return (
     <div className={cn("bg-white text-black h-fit w-full aspect-[210/297]", className)} ref={containerRef}>
       <div className={cn('space-y-6 p-6', !width && 'invisible')} style={{
         zoom: (1 / 794) * width
-      }}>
+      }} ref={contentRef} id="resumePreviewContent">
         <PersonalInfoHeader resumeData={resumeData} />
         <SummarySection resumeData={resumeData} />
         <WorkExperienceSection resumeData={resumeData} />
