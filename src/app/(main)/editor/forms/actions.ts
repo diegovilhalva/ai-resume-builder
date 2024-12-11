@@ -1,6 +1,8 @@
 "use server";
 
 import model from "@/lib/gemini";
+import { canUseAITools } from "@/lib/permission";
+import { getUserSubscriptionLevel } from "@/lib/subscriptions";
 import {
     GenerateSummaryInput,
     generateSummarySchema,
@@ -8,10 +10,19 @@ import {
     generateWorkExperienceSchema,
     WorkExperience,
 } from "@/lib/validation";
+import { auth } from "@clerk/nextjs/server";
 
 
 export async function generateSummary(input: GenerateSummaryInput) {
-    // TODO: Block for non-premium users
+    const { userId } = await auth()
+    if (!userId) {
+        throw new Error("Unathorized")
+    }
+
+    const subscriptionLevel = await getUserSubscriptionLevel(userId)
+    if (!canUseAITools(subscriptionLevel)) {
+        throw new Error("Upgrade your subscription level to use this feature")
+    }
 
     const { jobTitle, workExperiences, educations, skills } = generateSummarySchema.parse(input);
 
@@ -95,6 +106,16 @@ function parseWorkExperience(text: string): WorkExperience {
 export async function generateWorkExperience(
     input: GenerateWorkExperienceInput,
 ): Promise<WorkExperience> {
+    const { userId } = await auth()
+    if (!userId) {
+        throw new Error("Unathorized")
+    }
+
+    const subscriptionLevel = await getUserSubscriptionLevel(userId)
+    if (!canUseAITools(subscriptionLevel)) {
+        throw new Error("Upgrade your subscription level to use this feature")
+    }
+
     const { description } = generateWorkExperienceSchema.parse(input);
 
     const prompt = `
